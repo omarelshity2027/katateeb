@@ -214,7 +214,7 @@ async function impOk(){const all=st.imp.list.filter(x=>x.s==='جديد'||x.s==='
   up.forEach(x=>{const s=SS().find(z=>z.id===x.ex);if(!s)return;const ids=[...new Set([...s.teacherIds,...x.add.map(n=>mk(n).id)])];ups.push([s,ids]);u[DB.pre+'students/'+s.id+'/teacherIds']=ids});
   nt.forEach(t=>u[DB.pre+'teachers/'+t.id]=t);ns.forEach(s=>u[DB.pre+'students/'+s.id]=clean(s));
   try{await DB.db.ref().update(u)}catch(x){return tst('تعذر الاستيراد',1)}
-  TS().push(...nt);SS().push(...ns);ups.forEach(([s,ids])=>s.teacherIds=ids);tst(`تم: ${ns.length} طالب جديد، وإضافة شيوخ لـ ${ups.length} طالب، و${nt.length} شيخ جديد`);go('students')}
+  nt.forEach(t=>{if(!TS().some(z=>z.id===t.id))TS().push(t)});ns.forEach(s=>{if(!SS().some(z=>z.id===s.id))SS().push(s)});ups.forEach(([s,ids])=>{const c=SS().find(z=>z.id===s.id);if(c)c.teacherIds=ids});tst(`تم: ${ns.length} طالب جديد، وإضافة شيوخ لـ ${ups.length} طالب، و${nt.length} شيخ جديد`);go('students')}
 /* ===== التقارير: بطلاب شيخ واحد ودرجاتهم عنده بس ===== */
 function repRows(){const t=st.rt;if(!t)return[];const f=st.rf||'',q=nn(st.q).toLowerCase();
   return SS().filter(s=>s.teacherIds.includes(t)&&nn(s.name+' '+s.code).toLowerCase().includes(q)&&(!f||res(EV(s.id,t))===f)).sort((a,b)=>((EV(b.id,t)?EV(b.id,t).pct:-1)-(EV(a.id,t)?EV(a.id,t).pct:-1))||cmp(a,b))}
@@ -241,4 +241,3 @@ async function wipeGo(){if($('#wp').value.trim()!=='حذف')return tst('اكتب
 $('#mn').innerHTML='<p class="mu">جاري تحميل البيانات...</p>';
 DB.load().then(draw).catch(()=>{$('#mn').innerHTML='<div class="card no">تعذر الاتصال بقاعدة البيانات. تأكد من الإنترنت ومن قواعد Realtime Database.</div>'});
 </script></body></html>
- 
