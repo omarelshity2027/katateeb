@@ -9,7 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style id="pg"></style>
 <style>
-
+ 
 :root{--bg:#f6f7f4;--card:#fff;--tx:#1c2a22;--mu:#6b7a70;--g:#14532d;--g2:#1f7a45;--gx:#14532d;--au:#b8912f;--bd:#e2e6e0;--ok:#166534;--no:#b91c1c;--wr:#b45309;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101613;--card:#18211c;--tx:#e8eee9;--mu:#98a89d;--g:#1f7a45;--g2:#2a9d5c;--gx:#4ade80;--bd:#2a362f;--ok:#4ade80;--no:#f87171;--wr:#fbbf24}}
 :root[data-theme="dark"]{--bg:#101613;--card:#18211c;--tx:#e8eee9;--mu:#98a89d;--g:#1f7a45;--g2:#2a9d5c;--gx:#4ade80;--bd:#2a362f;--ok:#4ade80;--no:#f87171;--wr:#fbbf24}
@@ -47,105 +47,125 @@ label{display:block;font-size:14px;color:var(--mu);margin:10px 0 4px}
 #pr{display:none}
 @media(max-width:700px){nav{position:fixed;bottom:0;top:auto;height:auto;width:100%;display:flex;gap:2px;padding:4px;z-index:5;border-top:1px solid var(--bd);overflow-x:auto;padding-bottom:calc(4px + env(safe-area-inset-bottom,0px))}nav h2,#tg{display:none}nav a{flex-direction:column;align-items:center;font-size:11px;gap:2px;padding:6px 8px;white-space:nowrap}nav.c{width:100%}nav.c .t{display:inline}main{padding:12px 12px 90px}}
 @media print{#app,#md,#ts,#top{display:none!important}#pr{display:block;color:#000;background:#fff}:root{padding:0!important}html,body{background:#fff!important}}
-
+ 
 #pr,#pr *{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box}
 #pr .rh{background:#14532d;color:#f6f0df;border-bottom:1.2mm solid #b8912f;border-radius:2mm;padding:4mm 5mm;display:flex;justify-content:space-between;align-items:center}
 #pr .rh h1{margin:0;font-size:17pt;font-family:Amiri,serif}#pr .rh small{display:block;color:#e7d9a8;font-size:9.5pt}
 #pr table{font-size:9.5pt;margin-top:4mm}#pr th{background:#14532d;color:#f6f0df;padding:2mm;border:0}
 #pr td{padding:1.6mm 2mm;border-bottom:.2mm solid #e3dcc3;vertical-align:top}#pr tr{break-inside:avoid}#pr thead{display:table-header-group}
 #pr tbody tr:nth-child(even) td{background:#faf6e8}#pr .rd{text-align:center;margin-top:5mm;font-size:8.5pt;color:#8a8f80}
-
+ 
 #pr td,#pr th{white-space:normal;text-align:right}
 </style></head><body>
 <div id="app"><nav id="nv"></nav><main id="mn"></main></div>
 <div id="md"><div id="mb"></div></div><div id="ts"><span id="tx"></span></div><button id="fab" title="إضافة طالب" aria-label="إضافة طالب" onclick="stuForm()">+</button><div id="pr"></div>
 <script>
-const firebaseConfig={apiKey:"AIzaSyCcAw9uCR8YZKzfLrBWg5ZwjhzBj2CSWyI",authDomain:"qraan-eb167.firebaseapp.com",databaseURL:"https://qraan-eb167-default-rtdb.firebaseio.com",projectId:"qraan-eb167",storageBucket:"qraan-eb167.firebasestorage.app",messagingSenderId:"742225987824",appId:"1:742225987824:web:7b033870f0188b9b1c1a35"};
+const firebaseConfig={apiKey:"AIzaSyDaQ_6eKzVgi8OFSy7rvwtj8hT7PLK2nY4",authDomain:"ktaateb.firebaseapp.com",databaseURL:"https://ktaateb-default-rtdb.firebaseio.com",projectId:"ktaateb",storageBucket:"ktaateb.firebasestorage.app",messagingSenderId:"1017031129261",appId:"1:1017031129261:web:71521f42338212f611ee24",measurementId:"G-5EPJG2XCXF"};
 const $=s=>document.querySelector(s),e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nn=s=>String(s||'').replace(/[\u064B-\u065F\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ').trim();
 const clean=o=>JSON.parse(JSON.stringify(o)),ls=k=>{try{return localStorage.getItem(k)||''}catch(x){return''}};
 let _u=0;const uid=p=>p+Date.now().toString(36)+(_u++).toString(36)+Math.random().toString(36).slice(2,4);
-const norm=o=>({...o,teacherIds:o.teacherIds||[],evs:o.evs||{}});
+const hp=s=>{s='k|'+s;let a=0xdeadbeef,b=0x41c6ce57;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);a=Math.imul(a^c,2654435761);b=Math.imul(b^c,1597334677)}a=Math.imul(a^a>>>16,2246822507)^Math.imul(b^b>>>13,3266489909);b=Math.imul(b^b>>>16,2246822507)^Math.imul(a^a>>>13,3266489909);return(4294967296*(2097151&b)+(a>>>0)).toString(36)};
+const norm=o=>({...o,teacherIds:o.teacherIds||[]});
 const DEF={name:'مسابقة الكتاتيب',org:'',year:new Date().getFullYear(),pass:60};
-/* ===== البيانات: مسار منفصل katateeb/ داخل Firebase ===== */
-const DB={D:{students:[],teachers:[],settings:{}},pre:'katateeb/',
+/* ===== البيانات: مسار katateeb/ — الدرجات في evs/الطالب/الشيخ (مسار مستقل عشان نقفله بقواعد Firebase) ===== */
+const DB={D:{students:[],teachers:[],settings:{},evs:{}},pre:'',
   ref(p){return this.db.ref(this.pre+p)},
   w(p){return p.catch(()=>tst('حدث خطأ أثناء الحفظ، حاول مرة أخرى',1))},
   async load(){firebase.initializeApp(firebaseConfig);this.db=firebase.database();
-    const [a,b,c]=await Promise.all(['students','teachers','settings'].map(k=>this.ref(k).once('value')));
-    this.D.students=Object.values(a.val()||{}).map(norm);this.D.teachers=Object.values(b.val()||{});
-    let s=c.val();if(!s||!s.name){s={...DEF};await this.ref('settings').set(s)}this.D.settings=s;
+    const [a,b,c,d]=await Promise.all(['students','teachers','settings','evs'].map(k=>this.ref(k).once('value')));
+    this.D.students=Object.values(a.val()||{}).map(norm);this.D.teachers=Object.values(b.val()||{});this.D.evs=d.val()||{};
+    let s=c.val();if(!s||!s.name){s={...DEF,...(s||{})};await this.ref('settings').update(s)}this.D.settings=s;
     ['students','teachers'].forEach(k=>{const r=this.ref(k),up=x=>{const o=k==='students'?norm(x.val()):x.val(),l=this.D[k],i=l.findIndex(z=>z.id===o.id);if(i<0)l.push(o);else if(JSON.stringify(l[i])!==JSON.stringify(o))l[i]=o;else return;this.redraw()};
       r.on('child_added',up);r.on('child_changed',up);r.on('child_removed',x=>{const l=this.D[k],i=l.findIndex(z=>z.id===x.key);if(i>=0){l.splice(i,1);this.redraw()}})});
+    const er=this.ref('evs'),ue=x=>{if(JSON.stringify(this.D.evs[x.key])!==JSON.stringify(x.val())){this.D.evs[x.key]=x.val();this.redraw()}};
+    er.on('child_added',ue);er.on('child_changed',ue);er.on('child_removed',x=>{delete this.D.evs[x.key];this.redraw()});
     this.ref('settings').on('value',x=>{if(x.val()){this.D.settings=x.val();if(st.v!=='settings')this.redraw()}})},
   redraw(){clearTimeout(this._t);this._t=setTimeout(rd,400)},
   async code(){const mx=Math.max(0,...SS().map(s=>+((String(s.code||'').match(/(\d+)$/)||[0,0])[1])));let n;
     try{n=(await this.ref('counter').transaction(c=>Math.max(c||0,mx)+1)).snapshot.val()}catch(x){n=mx+1}return'K-'+String(n).padStart(4,'0')}};
 const ST=()=>DB.D.settings,SS=()=>DB.D.students,TS=()=>DB.D.teachers;
-/* ===== منطق ===== */
+/* ===== منطق: كل شيخ نتيجته مستقلة (ناجح عند شيخ وراسب عند آخر عادي) ===== */
+const EV=(sid,tid)=>(DB.D.evs[sid]||{})[tid];
+const res=v=>!v?'لم يُختبر':v.pct>=ST().pass?'ناجح':'راسب';
+const cls=x=>({'ناجح':'ok','راسب':'no'}[x]||'mu');
 const gr=s=>s.gender==='ذكر'?0:s.gender==='أنثى'?1:2;
 const cmp=(a,b)=>gr(a)-gr(b)||nn(a.name).localeCompare(nn(b.name),'ar');   // بنين أولًا ثم أبجديًا
 const tname=id=>(TS().find(t=>t.id===id)||{}).name;
 const tsel=sel=>[...TS()].sort((a,b)=>nn(a.name).localeCompare(nn(b.name),'ar')).map(t=>`<option value="${e(t.id)}" ${t.id===sel?'selected':''}>${e(t.name)}</option>`).join('');
-/* النتيجة النهائية = متوسط درجات كل المشايخ، وتكتمل بعد اختبار كل شيخ */
-const info=s=>{const ids=s.teacherIds.filter(tname),d=ids.filter(i=>s.evs[i]),n=ids.length,avg=d.length?Math.round(d.reduce((a,i)=>a+s.evs[i].pct,0)/d.length*10)/10:null;
-  return{n,d:d.length,avg,st:!n?'بدون شيخ':!d.length?'لم يبدأ':d.length<n?'ناقص':avg>=ST().pass?'ناجح':'راسب'}};
-const cls=x=>({'ناجح':'ok','راسب':'no','ناقص':'wr'}[x]||'mu');
-const scs=s=>s.teacherIds.filter(tname).map(t=>`${e(tname(t))}: ${s.evs[t]?s.evs[t].pct+'%':'—'}`).join('<br>');
-function search(q,f,by){const tk=nn(q).toLowerCase().split(' ').filter(Boolean);
-  return SS().filter(s=>{const i=info(s),h=nn([s.name,s.teacherIds.map(tname).join(' '),s.code,s.phone].join(' ')).toLowerCase();
-    return tk.every(t=>h.includes(t))&&(!f.teacher||s.teacherIds.includes(f.teacher))&&(!f.gender||s.gender===f.gender)&&(!f.st||i.st===f.st||(f.st==='مكتمل'&&(i.st==='ناجح'||i.st==='راسب')))&&(!f.tc||(f.tc==='1'?i.n===1:i.n>1))})
-  .sort((a,b)=>by==='score'?((info(b).avg??-1)-(info(a).avg??-1)||cmp(a,b)):cmp(a,b))}
+const chip=(s,t)=>{const v=EV(s.id,t);return`${e(tname(t))}: <span class="${v?cls(res(v)):'mu'}">${v?v.pct+'%':'—'}</span>`};
+function search(q,f){const tk=nn(q).toLowerCase().split(' ').filter(Boolean);
+  return SS().filter(s=>{const h=nn([s.name,s.teacherIds.map(tname).join(' '),s.code,s.phone].join(' ')).toLowerCase();
+    return tk.every(t=>h.includes(t))&&(!f.teacher||s.teacherIds.includes(f.teacher))&&(!f.gender||s.gender===f.gender)&&(!f.tc||(f.tc==='1'?s.teacherIds.length===1:s.teacherIds.length>1))&&(!f.st||(f.teacher?[f.teacher]:s.teacherIds).some(t=>res(EV(s.id,t))===f.st))}).sort(cmp)}
 /* ===== واجهة ===== */
-let st={v:'home',id:null,q:'',q2:'',f:{},sf:{},n:50,my:ls('k_my')};
-const tst=(t,er)=>{const x=$('#tx');x.textContent=t;x.className=er?'er':'';x.style.display='inline-block';clearTimeout(tst.t);tst.t=setTimeout(()=>x.style.display='none',3000)};
+let st={v:'my',id:null,q:'',q2:'',f:{},sf:{},n:50,my:ls('k_my'),rt:'',rf:'',admin:false};
+try{st.admin=sessionStorage.getItem('k_admin')==='1'}catch(x){}
+const adm=()=>!ST().pinHash||st.admin;
+const tst=(t,er)=>{const x=$('#tx');x.textContent=t;x.className=er?'er':'';x.style.display='inline-block';clearTimeout(tst.t);tst.t=setTimeout(()=>x.style.display='none',3200)};
 const modal=h=>{$('#mb').innerHTML=h;$('#md').style.display='flex'},closeM=()=>$('#md').style.display='none';
 const conf=(m,fn)=>{window._cf=()=>{closeM();fn()};modal(`<h3>هل أنت متأكد؟</h3><p>${m}</p><div class="row"><button class="d" onclick="_cf()">تأكيد</button><button onclick="closeM()">إلغاء</button></div>`)};
 const go=(v,id)=>{st.v=v;st.id=id||null;scrollTo(0,0);draw()};
-const NAV=[['home','الرئيسية','⌂'],['my','شاشة الشيخ','✎'],['students','الطلاب','☰'],['teachers','المشايخ','☺'],['reports','التقارير','▤'],['settings','الإعدادات','⚙']];
 const isDark=()=>{const t=document.documentElement.getAttribute('data-theme');return t?t==='dark':matchMedia('(prefers-color-scheme:dark)').matches};
 function toggleTheme(){const t=isDark()?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('qc_theme',t)}catch(x){}$('#thm').textContent=isDark()?'☀ نهاري':'☾ ليلي'}
-function draw(){
-  $('#nv').innerHTML=`<h2 class="row"><span class="t">${e(ST().name)}</span></h2>`+NAV.map(n=>`<a class="${st.v===n[0]||(st.v==='student'&&n[0]==='students')?'on':''}" onclick="go('${n[0]}')"><span>${n[2]}</span><span class="t">${n[1]}</span></a>`).join('')+`<a id="tg" onclick="$('#nv').classList.toggle('c')"><span>↔</span><span class="t">طي</span></a>`;
+/* الرقم السري */
+function askPin(t,fn){window._pf=fn;modal(`<h3>🔒 ${t}</h3><label>الرقم السري</label><input id="pn" type="password" inputmode="numeric" autocomplete="off" onkeydown="if(event.key==='Enter')pinGo()"><div class="row" style="margin-top:14px"><button class="p" onclick="pinGo()">تأكيد</button><button onclick="closeM()">إلغاء</button></div>`);setTimeout(()=>{const p=$('#pn');p&&p.focus()},50)}
+function pinGo(){const p=$('#pn').value;if(hp(p)!==ST().pinHash){$('#pn').value='';return tst('الرقم السري غير صحيح',1)}closeM();window._pf(p)}
+const adminIn=()=>askPin('دخول المسؤول',()=>{st.admin=true;try{sessionStorage.setItem('k_admin','1')}catch(x){}go('home')});
+const adminOut=()=>{st.admin=false;try{sessionStorage.removeItem('k_admin')}catch(x){}go('my')};
+const NAV=[['home','الرئيسية','⌂'],['my','شاشة الشيخ','✎'],['students','الطلاب','☰'],['teachers','المشايخ','☺'],['reports','التقارير','▤'],['settings','الإعدادات','⚙']];
+function draw(){if(!adm()&&st.v!=='my')st.v='my';
+  const nv=adm()?NAV:[NAV[1]];
+  $('#nv').innerHTML=`<h2 class="row"><span class="t">${e(ST().name)}</span></h2>`+nv.map(n=>`<a class="${st.v===n[0]||(st.v==='student'&&n[0]==='students')?'on':''}" onclick="go('${n[0]}')"><span>${n[2]}</span><span class="t">${n[1]}</span></a>`).join('')+(adm()?(ST().pinHash?`<a onclick="adminOut()"><span>🔓</span><span class="t">خروج المسؤول</span></a>`:''):`<a onclick="adminIn()"><span>🔒</span><span class="t">دخول المسؤول</span></a>`)+`<a id="tg" onclick="$('#nv').classList.toggle('c')"><span>↔</span><span class="t">طي</span></a>`;
+  $('#fab').style.display=adm()?'':'none';
   $('#mn').innerHTML=`<div class="row" style="margin-bottom:8px"><span class="mu f">${e(ST().name)}</span><button id="thm" onclick="toggleTheme()" title="تغيير المظهر">${isDark()?'☀ نهاري':'☾ ليلي'}</button></div>`+V[st.v]();if(V[st.v+'_'])V[st.v+'_']()}
 function rd(){if(st.v==='students')renderList();else if(st.v==='my')renderMy();else if(st.v==='teachers')tl();else if(st.v==='reports')rep();else if(st.v!=='settings')draw()}
 const stOpts=(v,a)=>a.map(([x,l])=>`<option value="${x}" ${v===x?'selected':''}>${l}</option>`).join('');
-const SO=[['','كل الحالات'],['لم يبدأ','لم يبدأ'],['ناقص','ناقص (شيخ لم يختبر)'],['مكتمل','مكتمل'],['ناجح','ناجح'],['راسب','راسب']];
+const SO=[['','كل الحالات'],['لم يُختبر','لم يُختبر'],['ناجح','ناجح'],['راسب','راسب']];
+const GO=[['','بنين وبنات'],['ذكر','بنين'],['أنثى','بنات']];
 const V={
-home(){const a=SS(),is=a.map(info),need=is.reduce((x,i)=>x+i.n,0),done=is.reduce((x,i)=>x+i.d,0),c=x=>is.filter(i=>i.st===x).length,
-  k=[['الطلاب',a.length],['المشايخ',TS().length],['اختبارات مطلوبة',need],['تمت',done],['متبقية',need-done],['ناجح',c('ناجح')],['راسب',c('راسب')],['ناقص',c('ناقص')],['لم يبدأ',c('لم يبدأ')]];
-  return`<div class="grid">${k.map(x=>`<div class="card st"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('')}</div>
-  <div class="card tw"><table><tr><th>الشيخ</th><th>طلابه</th><th>اختبرهم</th><th>متبقي</th></tr>${TS().map(t=>{const m=a.filter(s=>s.teacherIds.includes(t.id)),d=m.filter(s=>s.evs[t.id]).length;return`<tr><td>${e(t.name)}</td><td>${m.length}</td><td>${d}</td><td class="${m.length-d?'wr':'ok'}">${m.length-d}</td></tr>`}).join('')}</table></div>`},
-my(){const t=st.my;return`<h2>شاشة الشيخ</h2><div class="card"><label>أنا الشيخ</label><select onchange="st.my=this.value;try{localStorage.setItem('k_my',this.value)}catch(x){}draw()"><option value="">— اختر اسمك —</option>${tsel(t)}</select>${t&&tname(t)?`<input style="margin-top:10px" placeholder="بحث باسم الطالب" oninput="st.q2=this.value;renderMy()"><div id="my"></div>`:''}</div>`},
+home(){const a=SS(),L=a.flatMap(s=>s.teacherIds.filter(tname).map(t=>res(EV(s.id,t)))),c=x=>L.filter(r=>r===x).length,
+  k=[['الطلاب',a.length],['المشايخ',TS().length],['اختبارات مطلوبة',L.length],['تمت',L.length-c('لم يُختبر')],['متبقية',c('لم يُختبر')],['ناجح',c('ناجح')],['راسب',c('راسب')]];
+  return`${ST().pinHash?'':'<div class="card wr">⚠ لم يتم تعيين الرقم السري بعد، وكل الشاشات مفتوحة لأي حد معاه اللينك. عيّنه من الإعدادات.</div>'}<div class="grid">${k.map(x=>`<div class="card st"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('')}</div>
+  <div class="card tw"><table><tr><th>الشيخ</th><th>طلابه</th><th>اختبرهم</th><th>ناجح</th><th>راسب</th><th>متبقي</th></tr>${TS().map(t=>{const m=a.filter(s=>s.teacherIds.includes(t.id)),r=m.map(s=>res(EV(s.id,t.id))),n=x=>r.filter(z=>z===x).length;return`<tr><td>${e(t.name)}</td><td>${m.length}</td><td>${m.length-n('لم يُختبر')}</td><td class="ok">${n('ناجح')}</td><td class="no">${n('راسب')}</td><td class="${n('لم يُختبر')?'wr':'ok'}">${n('لم يُختبر')}</td></tr>`}).join('')}</table></div>`},
+my(){const t=st.my;return`<h2>شاشة الشيخ</h2><div class="card"><label>أنا الشيخ</label><select onchange="st.my=this.value;try{localStorage.setItem('k_my',this.value)}catch(x){}draw()"><option value="">— اختر اسمك —</option>${tsel(t)}</select>${t&&tname(t)?`<div class="row" style="margin-top:10px"><input class="f" placeholder="بحث باسم الطالب" oninput="st.q2=this.value;renderMy()"><select class="f" onchange="st.f2=this.value;renderMy()">${stOpts(st.f2||'',SO)}</select></div><div id="my"></div>`:''}</div>`},
 my_(){renderMy()},
-students(){const f=st.sf;return`<div class="row"><h2 class="f">الطلاب</h2><button class="p" onclick="stuForm()">+ إضافة طالب</button></div><div class="card"><input placeholder="ابحث بالاسم أو الشيخ أو الكود أو الهاتف" value="${e(st.q)}" oninput="st.q=this.value;st.n=50;renderList()">
-  <div class="row" style="margin-top:8px"><select class="f" onchange="st.sf.st=this.value;renderList()">${stOpts(f.st||'',SO)}</select><select class="f" onchange="st.sf.teacher=this.value;renderList()"><option value="">كل المشايخ</option>${tsel(f.teacher)}</select><select class="f" onchange="st.sf.tc=this.value;renderList()">${stOpts(f.tc||'',[['','عدد المشايخ: الكل'],['1','شيخ واحد'],['2','أكثر من شيخ']])}</select><select class="f" onchange="st.sf.gender=this.value;renderList()">${stOpts(f.gender||'',[['','بنين وبنات'],['ذكر','بنين'],['أنثى','بنات']])}</select><button onclick="st.sf={};st.q='';draw()">مسح</button></div><div id="ls"></div></div>`},
+students(){const f=st.sf;return`<div class="row"><h2 class="f">الطلاب</h2><button class="p" onclick="stuForm()">+ إضافة طالب</button></div><div class="card"><input placeholder="ابحث بالاسم أو الكود أو الشيخ أو الهاتف" value="${e(st.q)}" oninput="st.q=this.value;st.n=50;renderList()">
+  <div class="row" style="margin-top:10px"><select class="f" onchange="st.sf.gender=this.value;renderList()">${stOpts(f.gender||'',GO)}</select><select class="f" onchange="st.sf.st=this.value;renderList()">${stOpts(f.st||'',SO)}</select><select class="f" onchange="st.sf.teacher=this.value;renderList()"><option value="">كل المشايخ</option>${tsel(f.teacher)}</select><select class="f" onchange="st.sf.tc=this.value;renderList()">${stOpts(f.tc||'',[['','عدد المشايخ: الكل'],['1','شيخ واحد'],['2','أكثر من شيخ']])}</select><button onclick="st.sf={};st.q='';draw()">مسح الفلاتر</button></div><div id="ls"></div></div>`},
 students_(){renderList()},
-student(){const s=SS().find(x=>x.id===st.id);if(!s)return'<p>الطالب غير موجود</p>';const i=info(s);
-  return`<button onclick="go('students')">→ رجوع</button><div class="card"><h2>${e(s.name)}</h2><div class="grid"><div>الكود: ${e(s.code)}</div><div>النوع: ${e(s.gender)}</div><div>الهاتف: ${e(s.phone)}</div></div>${s.notes?`<p class="mu">${e(s.notes)}</p>`:''}</div>
-  <div class="card"><div class="big ${cls(i.st)}">${i.avg==null?'—':i.avg+'%'}</div><h3 class="${cls(i.st)}" style="text-align:center">${i.st}${i.n?` (${i.d} من ${i.n})`:''}</h3><p class="mu" style="text-align:center">النتيجة = متوسط درجات المشايخ، وتكتمل بعد اختبار كل شيخ</p>
-  ${s.teacherIds.filter(tname).map(t=>{const v=s.evs[t];return`<div class="s"><div><b>${e(tname(t))}</b><div>${v?`<span class="${v.pct>=ST().pass?'ok':'no'}">${v.pct}%</span> — ${new Date(v.at).toLocaleDateString('ar-EG')}${v.note?`<div class="mu">${e(v.note)}</div>`:''}`:'<span class="mu">لم يختبره بعد</span>'}</div></div><button onclick="evForm('${s.id}','${t}')">${v?'تعديل':'تسجيل درجة'}</button></div>`}).join('')||'<p class="mu">لا يوجد مشايخ للطالب</p>'}</div>
-  <div class="row"><button onclick="stuForm('${s.id}')">تعديل البيانات</button><button class="d" onclick="delStu('${s.id}')">حذف</button></div>`},
+student(){const s=SS().find(x=>x.id===st.id);if(!s)return'<p>الطالب غير موجود</p>';
+  return`<div class="row"><button onclick="go('students')">→ رجوع</button></div><div class="card"><h2>${e(s.name)}</h2><div class="grid"><div>الكود: ${e(s.code)}</div><div>النوع: ${e(s.gender)}</div><div>الهاتف: ${e(s.phone)}</div></div>${s.notes?`<p class="mu">ملاحظات: ${e(s.notes)}</p>`:''}</div>
+  <div class="card"><h3>النتيجة عند كل شيخ (مستقلة)</h3>${s.teacherIds.filter(tname).map(t=>{const v=EV(s.id,t),r=res(v);return`<div class="s"><div><b>${e(tname(t))}</b><div>${v?`<span class="${cls(r)}">${r} ${v.pct}%</span> — ${new Date(v.at).toLocaleDateString('ar-EG')}${v.note?`<div class="mu">${e(v.note)}</div>`:''}`:'<span class="mu">لم يُختبر</span>'}</div></div><div class="row">${v?`<button onclick="printRes('${s.id}','${t}')">طباعة</button><button onclick="resetEv('${s.id}','${t}')">🔒 إعادة التقييم</button>`:`<button class="p" onclick="evForm('${s.id}','${t}')">تسجيل درجة</button>`}</div></div>`}).join('')||'<p class="mu">لا يوجد مشايخ للطالب</p>'}</div>
+  <div class="row"><button onclick="stuForm('${s.id}')">تعديل البيانات</button><button class="p" onclick="printRes('${s.id}')">طباعة النتيجة (كل المشايخ)</button><button class="w" onclick="wa('${s.id}')">إرسال واتساب</button><button class="d" onclick="delStu('${s.id}')">حذف</button></div>`},
 teachers(){return`<div class="row"><h2 class="f">المشايخ</h2><button class="p" onclick="tForm()">+ إضافة شيخ</button></div><div class="card" id="tl"></div>`},
 teachers_(){tl()},
-reports(){const f=st.f;return`<h2>التقارير</h2><div class="card"><input placeholder="بحث" value="${e(st.q)}" oninput="st.q=this.value;rep()"><div class="row" style="margin-top:8px"><select class="f" onchange="st.f.st=this.value;rep()">${stOpts(f.st||'',SO)}</select><select class="f" onchange="st.f.teacher=this.value;rep()"><option value="">كل المشايخ</option>${tsel(f.teacher)}</select><select class="f" onchange="st.f.gender=this.value;rep()">${stOpts(f.gender||'',[['','بنين وبنات'],['ذكر','بنين'],['أنثى','بنات']])}</select><button onclick="exXl()">Excel</button><button onclick="printRep()">طباعة / PDF</button></div></div><div class="card tw" id="rp"></div>`},
+reports(){const t=st.rt;return`<h2>التقارير</h2><div class="card"><label>تقرير الشيخ (بطلابه ودرجاتهم عنده فقط)</label><select onchange="st.rt=this.value;draw()"><option value="">— اختر الشيخ —</option>${tsel(t)}</select>${t?`<div class="row" style="margin-top:10px"><input class="f" placeholder="بحث" value="${e(st.q)}" oninput="st.q=this.value;rep()"><select class="f" onchange="st.rf=this.value;rep()">${stOpts(st.rf,SO)}</select><button onclick="exXl()">Excel</button><button class="p" onclick="printRep()">طباعة / PDF</button></div>`:''}</div><div class="card tw" id="rp"></div>`},
 reports_(){rep()},
 settings(){const s=ST();return`<h2>الإعدادات</h2><div class="card"><div class="grid">${[['name','اسم المسابقة'],['org','الجهة (تظهر في التقرير)'],['year','السنة'],['pass','نسبة النجاح %']].map(([k,l])=>`<div><label>${l}</label><input id="s_${k}" value="${e(s[k])}"></div>`).join('')}</div><button class="p" style="margin-top:12px" onclick="saveSet()">حفظ</button></div>
+  <div class="card"><h3>الرقم السري للمسؤول ${s.pinHash?'<span class="ok">(معيَّن)</span>':'<span class="wr">(غير معيَّن)</span>'}</h3><p class="mu">بيفتح شاشات المسؤول، وبيسمح بإعادة تقييم أي طالب. الشيخ العادي مش بيشوف غير شاشته.</p><input id="s_pin" type="password" inputmode="numeric" placeholder="${s.pinHash?'رقم سري جديد':'اكتب رقم سري (4 أرقام أو أكتر)'}"><button class="p" style="margin-top:10px" onclick="setPin()">${s.pinHash?'تغيير':'تعيين'}</button></div>
   <div class="card"><h3>نسخة احتياطية</h3><button onclick="backup('manual')">تنزيل نسخة احتياطية</button></div>
   <div class="card"><h3 class="no">منطقة الخطر</h3><p class="mu">حذف كل الطلاب والمشايخ نهائيًا (مع تنزيل نسخة تلقائيًا).</p><button class="d" onclick="wipeAll()">حذف كل البيانات</button></div>`}};
-/* ===== شاشة الشيخ ===== */
-function renderMy(){const t=st.my;if(!t||!$('#my'))return;const r=SS().filter(s=>s.teacherIds.includes(t)&&nn(s.name).includes(nn(st.q2))).sort(cmp),d=r.filter(s=>s.evs[t]).length;
-  $('#my').innerHTML=`<p class="mu">${r.length} طالب — تم اختبار ${d} — متبقي ${r.length-d}</p>`+r.map(s=>{const v=s.evs[t];return`<div class="s"><div><b>${e(s.name)}</b><div>${v?`<span class="${v.pct>=ST().pass?'ok':'no'}">${v.pct}%</span>`:'<span class="mu">لم يُختبر</span>'}</div></div><button class="${v?'':'p'}" onclick="evForm('${s.id}','${t}')">${v?'تعديل الدرجة':'اختبار'}</button></div>`}).join('')}
-/* كل شيخ بيكتب درجته في مسار خاص (evs/الشيخ) فمفيش شيخين بيمسحوا درجات بعض */
-function evForm(sid,tid){const s=SS().find(x=>x.id===sid),v=s.evs[tid]||{};
-  modal(`<h3>${e(s.name)}</h3><p class="mu">اختبار الشيخ: ${e(tname(tid))}</p><label>الدرجة (من 100)</label><input id="e_pct" type="number" min="0" max="100" step="0.5" value="${v.pct??''}" style="font-size:28px;text-align:center"><label>ملاحظات</label><textarea id="e_note" rows="3">${e(v.note||'')}</textarea><div class="row" style="margin-top:12px"><button class="p f" onclick="saveEv('${sid}','${tid}')">حفظ</button>${v.at?`<button class="d" onclick="delEv('${sid}','${tid}')">مسح الدرجة</button>`:''}<button onclick="closeM()">إلغاء</button></div>`);setTimeout(()=>$('#e_pct').focus(),50)}
-function saveEv(sid,tid){const p=$('#e_pct').value;if(p===''||isNaN(p)||+p<0||+p>100)return tst('أدخل درجة صحيحة بين 0 و100',1);
-  const s=SS().find(x=>x.id===sid),v={pct:+p,note:$('#e_note').value.trim(),by:tname(tid),at:new Date().toISOString()};s.evs[tid]=v;
-  DB.w(DB.ref(`students/${sid}/evs/${tid}`).set(v));closeM();tst('تم حفظ الدرجة');rd()}
-function delEv(sid,tid){delete SS().find(x=>x.id===sid).evs[tid];DB.w(DB.ref(`students/${sid}/evs/${tid}`).remove());closeM();rd()}
+/* ===== شاشة الشيخ: الدرجة بعد الحفظ مقفولة، وتعديلها بالرقم السري بس ===== */
+function renderMy(){const t=st.my;if(!t||!$('#my'))return;const f=st.f2||'',r=SS().filter(s=>s.teacherIds.includes(t)&&nn(s.name).includes(nn(st.q2))&&(!f||res(EV(s.id,t))===f)).sort(cmp),d=SS().filter(s=>s.teacherIds.includes(t)&&EV(s.id,t)).length;
+  $('#my').innerHTML=`<p class="mu">${r.length} طالب — تم اختبار ${d}</p>`+r.map(s=>{const v=EV(s.id,t),x=res(v);return`<div class="s"><div><b>${e(s.name)}</b><div class="mu">${e(s.code)} — ${e(s.gender)} — <span class="${cls(x)}">${x}${v?' '+v.pct+'%':''}</span></div></div><div class="row">${v?`<button onclick="resetEv('${s.id}','${t}')">🔒 إعادة التقييم</button>`:`<button class="p" onclick="evForm('${s.id}','${t}')">اختبار</button>`}</div></div>`}).join('')||'<p class="mu">لا توجد نتائج</p>'}
+function evForm(sid,tid){const s=SS().find(x=>x.id===sid);if(EV(sid,tid))return tst('الدرجة مقفولة، استخدم إعادة التقييم',1);
+  modal(`<h3>${e(s.name)}</h3><p class="mu">اختبار الشيخ: ${e(tname(tid))}</p><label>الدرجة (من 100)</label><input id="e_pct" type="number" min="0" max="100" step="0.5" style="font-size:28px;text-align:center"><label>ملاحظات</label><textarea id="e_note" rows="3"></textarea><p class="wr">بعد الحفظ لا يمكن تعديل الدرجة إلا بالرقم السري للمسؤول.</p><div class="row" style="margin-top:12px"><button class="p f" onclick="saveEv('${sid}','${tid}')">حفظ الدرجة</button><button onclick="closeM()">إلغاء</button></div>`);setTimeout(()=>{const p=$('#e_pct');p&&p.focus()},50)}
+async function saveEv(sid,tid){const p=$('#e_pct').value;if(p===''||isNaN(p)||+p<0||+p>100)return tst('أدخل درجة صحيحة بين 0 و100',1);
+  if(!confirm(`سيتم حفظ الدرجة ${p}% ولا يمكن تعديلها بعد ذلك إلا بالرقم السري. متأكد؟`))return;
+  const v={pct:+p,note:$('#e_note').value.trim(),at:new Date().toISOString()};
+  try{await DB.ref(`evs/${sid}/${tid}`).set(v)}catch(x){return tst('تعذر الحفظ: الدرجة مسجلة بالفعل أو الصلاحية مرفوضة',1)}
+  (DB.D.evs[sid]=DB.D.evs[sid]||{})[tid]=v;closeM();tst('تم حفظ الدرجة');rd()}
+function resetEv(sid,tid){askPin('إعادة التقييم',async pin=>{const k=sid+'_'+tid;
+  try{await DB.ref('unlock/'+k).set(pin);await DB.ref(`evs/${sid}/${tid}`).remove();DB.ref('unlock/'+k).remove().catch(()=>{});
+    if(DB.D.evs[sid]){delete DB.D.evs[sid][tid];if(!Object.keys(DB.D.evs[sid]).length)delete DB.D.evs[sid]}tst('تم مسح الدرجة القديمة، سجّل التقييم الجديد');evForm(sid,tid)}
+  catch(x){tst('تعذر إعادة التقييم (راجع قواعد Firebase والرقم السري)',1)}})}
 /* ===== الطلاب ===== */
+function evOpen(id){const s=SS().find(x=>x.id===id),a=s.teacherIds.filter(tname);if(a.length===1&&!EV(id,a[0]))evForm(id,a[0]);else go('student',id)}
 function renderList(){const r=search(st.q,st.sf),p=r.slice(0,st.n);
-  $('#ls').innerHTML=(p.map(s=>{const i=info(s);return`<div class="s"><div><b style="cursor:pointer" onclick="go('student','${s.id}')">${e(s.name)}</b><div class="mu">${e(s.code)} — ${e(s.gender)} — ${e(s.teacherIds.map(tname).filter(Boolean).join('، '))||'بدون شيخ'}${i.n>1?` <span class="wr">(${i.n} مشايخ)</span>`:''}</div></div><div class="row"><span class="${cls(i.st)}">${i.st}${i.avg!=null?' '+i.avg+'%':''}${i.st==='ناقص'?` (${i.d}/${i.n})`:''}</span><button onclick="go('student','${s.id}')">فتح</button></div></div>`}).join('')||'<p class="mu">لا توجد نتائج</p>')+`<div class="row" style="margin-top:10px"><span class="mu f">${r.length} طالب</span>${r.length>st.n?`<button onclick="st.n+=50;renderList()">عرض المزيد</button>`:''}</div>`}
+  $('#ls').innerHTML=(p.map(s=>`<div class="s"><div><b style="cursor:pointer" onclick="go('student','${s.id}')">${e(s.name)}</b><div class="mu">${e(s.code)} — ${e(s.gender)} — ${s.teacherIds.filter(tname).map(t=>chip(s,t)).join('، ')||'بدون شيخ'}${s.teacherIds.length>1?` <span class="wr">(${s.teacherIds.length} مشايخ)</span>`:''}</div></div>
+  <div class="row"><button class="p" onclick="evOpen('${s.id}')">تقييم الطالب</button><button onclick="go('student','${s.id}')">فتح</button><button class="w" onclick="wa('${s.id}')">واتساب</button></div></div>`).join('')||'<p class="mu">لا توجد نتائج</p>')+`<div class="row" style="margin-top:10px"><span class="mu f">${r.length} طالب</span>${r.length>st.n?`<button onclick="st.n+=50;renderList()">عرض المزيد</button>`:''}</div>`}
+function wa(id){const s=SS().find(x=>x.id===id);let p=String(s.phone||'').replace(/\D/g,'');if(!p)return tst('لا يوجد رقم هاتف للطالب',1);if(p.startsWith('00'))p=p.slice(2);else if(p.startsWith('0'))p='20'+p.slice(1);
+  const m=[`*${ST().name}*`,`الاسم: ${s.name}`,`الكود: ${s.code}`,...s.teacherIds.filter(tname).map(t=>{const v=EV(id,t);return`الشيخ ${tname(t)}: ${v?v.pct+'% — '+res(v):'لم يُختبر بعد'}`})];
+  window.open(`https://wa.me/${p}?text=${encodeURIComponent(m.join('\n'))}`,'_blank')}
 function stuForm(id){const s=id?SS().find(x=>x.id===id):{gender:'ذكر',teacherIds:[]},i=(k,l)=>`<label>${l}</label><input id="f_${k}" value="${e(s[k]||'')}">`;
   modal(`<h3>${id?'تعديل الطالب':'إضافة طالب'}</h3>${i('name','الاسم بالكامل')}<label>النوع</label><select id="f_gender">${stOpts(s.gender,[['ذكر','ذكر'],['أنثى','أنثى']])}</select>${i('phone','رقم الهاتف')}${i('notes','ملاحظات')}<label>المشايخ (شيخ أو أكثر)</label><div id="f_tw"></div><button style="margin-top:6px" onclick="addTSel()">+ شيخ آخر</button>
   <div class="row" style="margin-top:14px"><button class="p" onclick="saveStu('${id||''}')">حفظ</button><button onclick="closeM()">إلغاء</button></div>`);(s.teacherIds.filter(tname).length?s.teacherIds.filter(tname):['']).forEach(t=>addTSel(t))}
@@ -157,28 +177,38 @@ async function saveStu(id){const g=k=>$('#f_'+k).value.trim(),x={name:g('name'),
   if(id){Object.assign(SS().find(s=>s.id===id),x);DB.w(DB.ref('students/'+id).update(clean(x)))}
   else{const s=norm({...x,id:uid('S'),code:await DB.code(),reg:new Date().toISOString()});sid=s.id;SS().push(s);DB.w(DB.ref('students/'+s.id).set(clean(s)))}
   closeM();tst('تم الحفظ');go('student',sid)}
-function delStu(id){conf('سيتم حذف الطالب ودرجاته.',()=>{DB.D.students=SS().filter(s=>s.id!==id);DB.w(DB.ref('students/'+id).remove());tst('تم الحذف');go('students')})}
+function delStu(id){askPin('حذف الطالب',()=>conf('سيتم حذف الطالب (درجاته المسجلة بتفضل في قاعدة البيانات).',()=>{DB.D.students=SS().filter(s=>s.id!==id);DB.w(DB.ref('students/'+id).remove());tst('تم الحذف');go('students')}))}
 /* ===== المشايخ ===== */
-function tl(){const el=$('#tl');if(!el)return;el.innerHTML=[...TS()].sort((a,b)=>nn(a.name).localeCompare(nn(b.name),'ar')).map(t=>{const m=SS().filter(s=>s.teacherIds.includes(t.id)),d=m.filter(s=>s.evs[t.id]).length;
-  return`<div class="s"><div><b>${e(t.name)}</b><div class="mu">${e(t.phone||'')} — ${m.length} طالب — اختبر ${d}</div></div><div class="row"><button onclick="st.my='${t.id}';try{localStorage.setItem('k_my','${t.id}')}catch(x){}go('my')">شاشته</button><button onclick="tForm('${t.id}')">تعديل</button><button class="d" onclick="delT('${t.id}')">حذف</button></div></div>`}).join('')||'<p class="mu">أضف المشايخ أولًا</p>'}
+function tl(){const el=$('#tl');if(!el)return;el.innerHTML=[...TS()].sort((a,b)=>nn(a.name).localeCompare(nn(b.name),'ar')).map(t=>{const m=SS().filter(s=>s.teacherIds.includes(t.id)),d=m.filter(s=>EV(s.id,t.id)).length;
+  return`<div class="s"><div><b>${e(t.name)}</b><div class="mu">${e(t.phone||'')} — ${m.length} طالب — اختبر ${d}</div></div><div class="row"><button onclick="st.my='${t.id}';try{localStorage.setItem('k_my','${t.id}')}catch(x){}go('my')">شاشته</button><button onclick="st.rt='${t.id}';go('reports')">تقريره</button><button onclick="tForm('${t.id}')">تعديل</button><button class="d" onclick="delT('${t.id}')">حذف</button></div></div>`}).join('')||'<p class="mu">أضف المشايخ أولًا</p>'}
 function tForm(id){const t=id?TS().find(x=>x.id===id):{};modal(`<h3>${id?'تعديل شيخ':'إضافة شيخ'}</h3><label>الاسم</label><input id="t_name" value="${e(t.name||'')}"><label>رقم الهاتف</label><input id="t_phone" value="${e(t.phone||'')}"><div class="row" style="margin-top:14px"><button class="p" onclick="saveT('${id||''}')">حفظ</button><button onclick="closeM()">إلغاء</button></div>`)}
 function saveT(id){const x={name:$('#t_name').value.trim(),phone:$('#t_phone').value.trim()};if(!x.name)return tst('اكتب اسم الشيخ',1);if(TS().some(t=>t.id!==id&&nn(t.name)===nn(x.name)))return tst('الشيخ مسجل بالفعل',1);
   if(id){Object.assign(TS().find(t=>t.id===id),x);DB.w(DB.ref('teachers/'+id).update(x))}else{const t={id:uid('T'),...x};TS().push(t);DB.w(DB.ref('teachers/'+t.id).set(t))}closeM();tst('تم الحفظ');rd()}
-function delT(id){const n=SS().filter(s=>s.teacherIds.includes(id)).length;conf(`حذف الشيخ${n?` (له ${n} طالب، ودرجاته هتتشال من حساب نتائجهم)`:''}؟`,()=>{DB.D.teachers=TS().filter(t=>t.id!==id);DB.w(DB.ref('teachers/'+id).remove());tl()})}
-/* ===== التقارير ===== */
-function rep(){const r=search(st.q,st.f,'score'),el=$('#rp');if(!el)return;
-  el.innerHTML=`<p class="mu">${r.length} طالب — مرتبين بالمتوسط من الأعلى</p><table><tr><th>م</th><th>الاسم</th><th>النوع</th><th>درجات المشايخ</th><th>المتوسط</th><th>الحالة</th></tr>${r.map((s,k)=>{const i=info(s);return`<tr><td>${k+1}</td><td>${e(s.name)}</td><td>${e(s.gender)}</td><td>${scs(s)}</td><td>${i.avg==null?'-':i.avg+'%'}</td><td class="${cls(i.st)}">${i.st}${i.st==='ناقص'?` (${i.d}/${i.n})`:''}</td></tr>`}).join('')}</table>`}
-function exXl(){const T=[...TS()].sort((a,b)=>nn(a.name).localeCompare(nn(b.name),'ar')),r=search(st.q,st.f,'score').map(s=>{const i=info(s),o={'الاسم':s.name,'الكود':s.code,'النوع':s.gender,'عدد المشايخ':i.n};T.forEach(t=>o['الشيخ '+t.name]=s.teacherIds.includes(t.id)?(s.evs[t.id]?s.evs[t.id].pct:'لم يختبر'):'');o['المتوسط']=i.avg??'';o['الحالة']=i.st;return o});
-  try{const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(r),'التقرير');XLSX.writeFile(wb,'report.xlsx')}catch(x){tst('تعذر التصدير',1)}}
-async function printRep(){const r=search(st.q,st.f,'score');$('#pg').textContent='@page{size:A4 portrait;margin:11mm 10mm 13mm}';
-  $('#pr').innerHTML=`<div class="rh"><div><small>${e(ST().org)}</small><h1>${e(ST().name)}</h1></div><div style="text-align:left"><h1>${e(ST().year)}</h1><small>تقرير النتائج</small></div></div><table><thead><tr><th>م</th><th>الاسم</th><th>درجات المشايخ</th><th>المتوسط</th><th>الحالة</th></tr></thead><tbody>${r.map((s,k)=>{const i=info(s);return`<tr><td>${k+1}</td><td><b>${e(s.name)}</b></td><td>${scs(s)}</td><td>${i.avg==null?'-':i.avg+'%'}</td><td>${i.st}</td></tr>`}).join('')}</tbody></table><div class="rd">${r.length} طالب — تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}</div>`;
-  try{await document.fonts.load('700 20px Amiri','بسم')}catch(x){}window.print()}
+function delT(id){const n=SS().filter(s=>s.teacherIds.includes(id)).length;askPin('حذف الشيخ',()=>conf(`حذف الشيخ${n?` (له ${n} طالب)`:''}؟`,()=>{DB.D.teachers=TS().filter(t=>t.id!==id);DB.w(DB.ref('teachers/'+id).remove());tl()}))}
+/* ===== التقارير: بطلاب شيخ واحد ودرجاتهم عنده بس ===== */
+function repRows(){const t=st.rt;if(!t)return[];const f=st.rf||'',q=nn(st.q).toLowerCase();
+  return SS().filter(s=>s.teacherIds.includes(t)&&nn(s.name+' '+s.code).toLowerCase().includes(q)&&(!f||res(EV(s.id,t))===f)).sort((a,b)=>((EV(b.id,t)?EV(b.id,t).pct:-1)-(EV(a.id,t)?EV(a.id,t).pct:-1))||cmp(a,b))}
+const stats=(r,t)=>{const x=r.map(s=>res(EV(s.id,t))),c=y=>x.filter(z=>z===y).length;return{n:r.length,d:r.length-c('لم يُختبر'),ok:c('ناجح'),no:c('راسب')}};
+function rep(){const el=$('#rp');if(!el)return;if(!st.rt)return el.innerHTML='<p class="mu">اختر الشيخ لعرض تقريره</p>';const t=st.rt,r=repRows(),k=stats(r,t);
+  el.innerHTML=`<p class="mu">${e(tname(t))} — ${k.n} طالب، اختُبر ${k.d}، ناجح ${k.ok}، راسب ${k.no}</p><table><tr><th>م</th><th>الاسم</th><th>النوع</th><th>الدرجة</th><th>الحالة</th><th>ملاحظات</th></tr>${r.map((s,i)=>{const v=EV(s.id,t),x=res(v);return`<tr><td>${i+1}</td><td>${e(s.name)}</td><td>${e(s.gender)}</td><td>${v?v.pct+'%':'-'}</td><td class="${cls(x)}">${x}</td><td>${e(v?.note||'')}</td></tr>`}).join('')}</table>`}
+function exXl(){const t=st.rt,r=repRows().map((s,i)=>{const v=EV(s.id,t);return{'م':i+1,'الاسم':s.name,'الكود':s.code,'النوع':s.gender,'الدرجة':v?v.pct:'','الحالة':res(v),'ملاحظات':v?.note||''}});
+  try{const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(r),'التقرير');XLSX.writeFile(wb,'report-'+(tname(t)||'')+'.xlsx')}catch(x){tst('تعذر التصدير',1)}}
+async function pr(h){$('#pg').textContent='@page{size:A4 portrait;margin:11mm 10mm 13mm}';$('#pr').innerHTML=h;try{await document.fonts.load('700 20px Amiri','بسم')}catch(x){}window.print()}
+const rh=t=>`<div class="rh"><div><small>${e(ST().org)}</small><h1>${e(ST().name)}</h1></div><div style="text-align:left"><h1>${e(ST().year)}</h1><small>${t}</small></div></div>`;
+function printRep(){const t=st.rt;if(!t)return;const r=repRows(),k=stats(r,t);
+  pr(`${rh('تقرير الشيخ: '+e(tname(t)))}<p style="font-size:10pt;margin:3mm 0">عدد الطلاب: <b>${k.n}</b> — تم اختبارهم: <b>${k.d}</b> — ناجح: <b>${k.ok}</b> — راسب: <b>${k.no}</b></p><table><thead><tr><th>م</th><th>الاسم</th><th>النوع</th><th>الدرجة</th><th>الحالة</th><th>ملاحظات</th></tr></thead><tbody>${r.map((s,i)=>{const v=EV(s.id,t);return`<tr><td>${i+1}</td><td><b>${e(s.name)}</b></td><td>${e(s.gender)}</td><td>${v?v.pct+'%':'-'}</td><td>${res(v)}</td><td>${e(v?.note||'')}</td></tr>`}).join('')}</tbody></table><div class="rd">تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}</div>`)}
+function printRes(sid,tid){const s=SS().find(x=>x.id===sid),ids=(tid?[tid]:s.teacherIds).filter(tname);
+  pr(`${rh('نتيجة طالب')}<p style="margin:4mm 0;font-size:11pt"><b style="font-size:15pt">${e(s.name)}</b> — الكود: ${e(s.code)} — ${e(s.gender)}</p><table><thead><tr><th>الشيخ</th><th>الدرجة</th><th>الحالة</th><th>ملاحظات</th><th>التاريخ</th></tr></thead><tbody>${ids.map(t=>{const v=EV(sid,t);return`<tr><td>${e(tname(t))}</td><td>${v?v.pct+'%':'-'}</td><td>${res(v)}</td><td>${e(v?.note||'')}</td><td>${v?new Date(v.at).toLocaleDateString('ar-EG'):'-'}</td></tr>`}).join('')}</tbody></table><div class="rd">تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}</div>`)}
 /* ===== إعدادات ===== */
-function saveSet(){const s=ST();['name','org'].forEach(k=>s[k]=$('#s_'+k).value);['year','pass'].forEach(k=>s[k]=+$('#s_'+k).value||0);if(s.pass<0||s.pass>100)return tst('نسبة النجاح بين 0 و100',1);DB.w(DB.ref('settings').set(clean(s)));tst('تم الحفظ');draw()}
-function backup(t){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({at:new Date().toISOString(),students:SS(),teachers:TS(),settings:ST()})],{type:'application/json'}));a.download=`katateeb-${t}-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove()}
-function wipeAll(){modal(`<h3 class="no">حذف كل البيانات</h3><p>هيتنزل نسخة احتياطية أولًا. اكتب كلمة <b>حذف</b> للتأكيد:</p><input id="wp"><div class="row" style="margin-top:14px"><button class="d" onclick="wipeGo()">حذف كل شيء</button><button onclick="closeM()">إلغاء</button></div>`)}
+async function saveSet(){const o={name:$('#s_name').value,org:$('#s_org').value,year:+$('#s_year').value||0,pass:+$('#s_pass').value||0};if(o.pass<0||o.pass>100)return tst('نسبة النجاح بين 0 و100',1);Object.assign(ST(),o);DB.w(DB.ref('settings').update(o));tst('تم الحفظ');draw()}
+async function setPin(){const p=$('#s_pin').value.trim();if(p.length<4)return tst('الرقم السري 4 خانات على الأقل',1);
+  try{await DB.ref('secret').set(String(p))}catch(x){return tst('الرقم السري متعين بالفعل في Firebase: احذف katateeb/secret من الـ Console ثم أعد المحاولة',1)}
+  ST().pinHash=hp(p);DB.w(DB.ref('settings').update({pinHash:ST().pinHash}));st.admin=true;try{sessionStorage.setItem('k_admin','1')}catch(x){}tst('تم حفظ الرقم السري');draw()}
+function backup(t){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({at:new Date().toISOString(),students:SS(),teachers:TS(),evs:DB.D.evs,settings:{...ST(),pinHash:undefined}})],{type:'application/json'}));a.download=`katateeb-${t}-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove()}
+function wipeAll(){askPin('حذف كل البيانات',()=>modal(`<h3 class="no">حذف كل البيانات</h3><p>هيتنزل نسخة احتياطية أولًا. اكتب كلمة <b>حذف</b> للتأكيد:</p><input id="wp"><div class="row" style="margin-top:14px"><button class="d" onclick="wipeGo()">حذف كل شيء</button><button onclick="closeM()">إلغاء</button></div>`))}
 async function wipeGo(){if($('#wp').value.trim()!=='حذف')return tst('اكتب كلمة حذف',1);backup('before-wipe');
-  try{await DB.ref('students').remove();await DB.ref('teachers').remove();DB.D.students=[];DB.D.teachers=[];closeM();tst('تم الحذف');go('home')}catch(x){tst('تعذر الحذف',1)}}
+  try{await DB.ref('students').remove();await DB.ref('teachers').remove();try{await DB.ref('evs').remove()}catch(x){}DB.D.students=[];DB.D.teachers=[];DB.D.evs={};closeM();tst('تم الحذف');go('home')}catch(x){tst('تعذر الحذف',1)}}
 $('#mn').innerHTML='<p class="mu">جاري تحميل البيانات...</p>';
 DB.load().then(draw).catch(()=>{$('#mn').innerHTML='<div class="card no">تعذر الاتصال بقاعدة البيانات. تأكد من الإنترنت ومن قواعد Realtime Database.</div>'});
 </script></body></html>
+ 
