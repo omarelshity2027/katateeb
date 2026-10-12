@@ -112,7 +112,7 @@ function askPin(t,fn){window._pf=fn;modal(`<h3>🔒 ${t}</h3><label>الرقم �
 function pinGo(){const p=$('#pn').value;if(hp(p)!==ST().pinHash){$('#pn').value='';return tst('الرقم السري غير صحيح',1)}closeM();window._pf(p)}
 const adminIn=()=>askPin('دخول المسؤول',()=>{st.admin=true;try{sessionStorage.setItem('k_admin','1')}catch(x){}go('home')});
 const adminOut=()=>{st.admin=false;try{sessionStorage.removeItem('k_admin')}catch(x){}go('my')};
-const NAV=[['home','الرئيسية','⌂'],['my','شاشة الشيخ','✎'],['students','الطلاب','☰'],['teachers','المشايخ','☺'],['reports','التقارير','▤'],['settings','الإعدادات','⚙']];
+const NAV=[['home','الرئيسية','⌂'],['my','شاشة الشيخ','✎'],['students','الطلاب','☰'],['teachers','المشايخ','☺'],['import','استيراد Excel','⇪'],['reports','التقارير','▤'],['settings','الإعدادات','⚙']];
 function draw(){if(!adm()&&st.v!=='my')st.v='my';
   const nv=adm()?NAV:[NAV[1]];
   $('#nv').innerHTML=`<h2 class="row"><span class="t">${e(ST().name)}</span></h2>`+nv.map(n=>`<a class="${st.v===n[0]||(st.v==='student'&&n[0]==='students')?'on':''}" onclick="go('${n[0]}')"><span>${n[2]}</span><span class="t">${n[1]}</span></a>`).join('')+(adm()?(ST().pinHash?`<a onclick="adminOut()"><span>🔓</span><span class="t">خروج المسؤول</span></a>`:''):`<a onclick="adminIn()"><span>🔒</span><span class="t">دخول المسؤول</span></a>`)+`<a id="tg" onclick="$('#nv').classList.toggle('c')"><span>↔</span><span class="t">طي</span></a>`;
@@ -138,6 +138,7 @@ student(){const s=SS().find(x=>x.id===st.id);if(!s)return'<p>الطالب غير
   <div class="row"><button onclick="stuForm('${s.id}')">تعديل البيانات</button><button class="p" onclick="printRes('${s.id}')">طباعة النتيجة (كل المشايخ)</button><button class="w" onclick="wa('${s.id}')">إرسال واتساب</button><button class="d" onclick="delStu('${s.id}')">حذف</button></div>`},
 teachers(){return`<div class="row"><h2 class="f">المشايخ</h2><button class="p" onclick="tForm()">+ إضافة شيخ</button></div><div class="card" id="tl"></div>`},
 teachers_(){tl()},
+import(){return`<h2>استيراد Excel</h2><div class="card"><p class="mu">ملف Excel أو CSV، أول صف عناوين: <b>الاسم</b> (مطلوب)، <b>النوع</b>، <b>الشيخ</b>، <b>الهاتف</b>، <b>ملاحظات</b>. الطالب اللي مع أكتر من شيخ يتكرر في أكتر من صف (كل صف بشيخ)، وبيتجمع تلقائي في طالب واحد بكل مشايخه. ولو الطالب موجود قبل كده، بيتضاف له الشيخ الجديد بدل ما يتكرر. المشايخ الجداد بيتضافوا تلقائي، وتقدر تضيف شيت اسمه «المشايخ» فيه الاسم والهاتف.</p><button onclick="tpl()">تنزيل نموذج جاهز</button><input type="file" accept=".xlsx,.xls,.csv" style="margin-top:10px" onchange="impFile(this.files[0])"><div id="ip"></div></div>`},
 reports(){const t=st.rt;return`<h2>التقارير</h2><div class="card"><label>تقرير الشيخ (بطلابه ودرجاتهم عنده فقط)</label><select onchange="st.rt=this.value;draw()"><option value="">— اختر الشيخ —</option>${tsel(t)}</select>${t?`<div class="row" style="margin-top:10px"><input class="f" placeholder="بحث" value="${e(st.q)}" oninput="st.q=this.value;rep()"><select class="f" onchange="st.rf=this.value;rep()">${stOpts(st.rf,SO)}</select><button onclick="exXl()">Excel</button><button class="p" onclick="printRep()">طباعة / PDF</button></div>`:''}</div><div class="card tw" id="rp"></div>`},
 reports_(){rep()},
 settings(){const s=ST();return`<h2>الإعدادات</h2><div class="card"><div class="grid">${[['name','اسم المسابقة'],['org','الجهة (تظهر في التقرير)'],['year','السنة'],['pass','نسبة النجاح %']].map(([k,l])=>`<div><label>${l}</label><input id="s_${k}" value="${e(s[k])}"></div>`).join('')}</div><button class="p" style="margin-top:12px" onclick="saveSet()">حفظ</button></div>
@@ -185,6 +186,35 @@ function tForm(id){const t=id?TS().find(x=>x.id===id):{};modal(`<h3>${id?'تعد
 function saveT(id){const x={name:$('#t_name').value.trim(),phone:$('#t_phone').value.trim()};if(!x.name)return tst('اكتب اسم الشيخ',1);if(TS().some(t=>t.id!==id&&nn(t.name)===nn(x.name)))return tst('الشيخ مسجل بالفعل',1);
   if(id){Object.assign(TS().find(t=>t.id===id),x);DB.w(DB.ref('teachers/'+id).update(x))}else{const t={id:uid('T'),...x};TS().push(t);DB.w(DB.ref('teachers/'+t.id).set(t))}closeM();tst('تم الحفظ');rd()}
 function delT(id){const n=SS().filter(s=>s.teacherIds.includes(id)).length;askPin('حذف الشيخ',()=>conf(`حذف الشيخ${n?` (له ${n} طالب)`:''}؟`,()=>{DB.D.teachers=TS().filter(t=>t.id!==id);DB.w(DB.ref('teachers/'+id).remove());tl()}))}
+/* ===== استيراد Excel: طلاب + مشايخ ===== */
+const colv=(r,a)=>{for(const k of a)if(r[k]!==undefined&&String(r[k]).trim()!=='')return String(r[k]).trim();return''};
+const splitT=s=>String(s||'').split(/[،,؛;\/+|\n]/).map(z=>z.trim()).filter(Boolean);
+const fixPh=p=>/^1[0-25]\d{8}$/.test(p)?'0'+p:p;
+async function codesN(n){const mx=Math.max(0,...SS().map(s=>+((String(s.code||'').match(/(\d+)$/)||[0,0])[1])));try{const r=await DB.ref('counter').transaction(c=>Math.max(c||0,mx)+n);return r.snapshot.val()-n+1}catch(x){return mx+1}}
+function tpl(){const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['الاسم','النوع','الشيخ','الهاتف','ملاحظات'],['محمد أحمد','ذكر','الشيخ عمر','01000000000',''],['محمد أحمد','ذكر','الشيخ علي','',''],['فاطمة محمود','أنثى','الشيخ علي','','']]),'الطلاب');XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['الاسم','الهاتف'],['الشيخ عمر','01000000001'],['الشيخ علي','']]),'المشايخ');XLSX.writeFile(wb,'نموذج-استيراد.xlsx')}
+/* الطالب ممكن يتكرر في أكتر من صف (كل صف بشيخ) وبيتجمعوا في طالب واحد بكل مشايخه */
+function impFile(f){if(!f)return;const rd=new FileReader();rd.onload=ev=>{try{
+  const wb=XLSX.read(ev.target.result,{type:'array'}),sh=wb.SheetNames.find(n=>n.trim()==='المشايخ'),main=wb.SheetNames.find(n=>n.trim()!=='المشايخ')||wb.SheetNames[0];
+  const rows=XLSX.utils.sheet_to_json(wb.Sheets[main],{defval:''}),G={},tch=[];let bad=0;
+  if(sh)XLSX.utils.sheet_to_json(wb.Sheets[sh],{defval:''}).forEach(r=>{const n=colv(r,['الاسم','الشيخ','اسم الشيخ']);if(n)tch.push({name:n,phone:fixPh(colv(r,['الهاتف','رقم الهاتف']))})});
+  rows.forEach(r=>{const name=colv(r,['الاسم','اسم الطالب','الطالب']),n=nn(name);if(!n){if(Object.values(r).some(v=>String(v).trim()))bad++;return}
+    const g=colv(r,['النوع']),x=G[n]=G[n]||{name,gender:'',phone:'',notes:'',tn:[],rows:0};x.rows++;
+    x.gender=x.gender||(/أنث|انث|بنت/.test(g)?'أنثى':/ذكر|ولد|بنين/.test(g)?'ذكر':'');x.phone=x.phone||fixPh(colv(r,['الهاتف','رقم الهاتف']));x.notes=x.notes||colv(r,['ملاحظات']);
+    splitT(colv(r,['الشيخ','المشايخ','المحفظ','المحفظون','المحفظين'])).forEach(t=>{if(!x.tn.some(z=>nn(z)===nn(t)))x.tn.push(t)})});
+  const list=Object.entries(G).map(([n,x])=>{const ex=SS().find(s=>nn(s.name)===n);
+    if(!ex){x.s='جديد';x.add=x.tn}else{x.ex=ex.id;x.add=x.tn.filter(t=>{const o=TS().find(z=>nn(z.name)===nn(t));return!(o&&ex.teacherIds.includes(o.id))});x.s=x.add.length?'تحديث':'موجود'}return x});
+  st.imp={list,tch,bad};showImp()}catch(x){tst('تعذر قراءة الملف، تأكد من صيغته',1)}};rd.readAsArrayBuffer(f)}
+function showImp(){const{list,tch,bad}=st.imp,c=z=>list.filter(x=>x.s===z).length,names=[...new Set([...tch.map(t=>t.name),...list.flatMap(x=>x.add)])],nw=names.filter(n=>!TS().some(t=>nn(t.name)===nn(n))),ns=list.filter(x=>x.s==='جديد'&&!x.tn.length).length;
+  $('#ip').innerHTML=`<p>طلاب جدد: <b class="ok">${c('جديد')}</b> — طلاب موجودين هيتضاف لهم شيوخ: <b class="wr">${c('تحديث')}</b> — موجودين بدون تغيير: <b class="mu">${c('موجود')}</b>${bad?` — صفوف بدون اسم (اتتخطت): <b class="no">${bad}</b>`:''}<br>مشايخ جدد هيتضافوا: <b>${nw.length}</b>${nw.length?' ('+e(nw.join('، '))+')':''}${ns?`<br><span class="wr">${ns} طالب جديد بدون شيخ</span>`:''}</p>
+  <div class="tw"><table><tr><th>الاسم</th><th>النوع</th><th>المشايخ</th><th>الحالة</th></tr>${list.slice(0,100).map(x=>`<tr><td>${e(x.name)}</td><td>${e(x.gender)}</td><td>${e(x.s==='تحديث'?'+ '+x.add.join('، '):x.tn.join('، '))}</td><td class="${x.s==='جديد'?'ok':x.s==='تحديث'?'wr':'mu'}">${x.s}</td></tr>`).join('')}</table></div>${list.length>100?'<p class="mu">معروض أول 100 طالب فقط، والاستيراد يشمل الكل.</p>':''}<button class="p" style="margin-top:10px" onclick="impOk()">تأكيد الاستيراد</button>`}
+async function impOk(){const all=st.imp.list.filter(x=>x.s==='جديد'||x.s==='تحديث'),nw=all.filter(x=>x.s==='جديد'),up=all.filter(x=>x.s==='تحديث'),tch=st.imp.tch;if(!all.length&&!tch.length)return tst('مفيش حاجة للاستيراد',1);
+  st.imp=null;const u={},nt=[],mk=(n,ph)=>{let t=TS().find(t=>nn(t.name)===nn(n))||nt.find(t=>nn(t.name)===nn(n));if(!t){t={id:uid('T'),name:n,phone:ph||''};nt.push(t)}return t};
+  tch.forEach(t=>mk(t.name,t.phone));
+  const c0=await codesN(nw.length),now=new Date().toISOString(),ns=nw.map((x,i)=>norm({id:uid('S'),code:'K-'+String(c0+i).padStart(4,'0'),name:x.name,gender:x.gender,phone:x.phone,notes:x.notes,teacherIds:[...new Set(x.tn.map(n=>mk(n).id))],reg:now})),ups=[];
+  up.forEach(x=>{const s=SS().find(z=>z.id===x.ex);if(!s)return;const ids=[...new Set([...s.teacherIds,...x.add.map(n=>mk(n).id)])];ups.push([s,ids]);u[DB.pre+'students/'+s.id+'/teacherIds']=ids});
+  nt.forEach(t=>u[DB.pre+'teachers/'+t.id]=t);ns.forEach(s=>u[DB.pre+'students/'+s.id]=clean(s));
+  try{await DB.db.ref().update(u)}catch(x){return tst('تعذر الاستيراد',1)}
+  TS().push(...nt);SS().push(...ns);ups.forEach(([s,ids])=>s.teacherIds=ids);tst(`تم: ${ns.length} طالب جديد، وإضافة شيوخ لـ ${ups.length} طالب، و${nt.length} شيخ جديد`);go('students')}
 /* ===== التقارير: بطلاب شيخ واحد ودرجاتهم عنده بس ===== */
 function repRows(){const t=st.rt;if(!t)return[];const f=st.rf||'',q=nn(st.q).toLowerCase();
   return SS().filter(s=>s.teacherIds.includes(t)&&nn(s.name+' '+s.code).toLowerCase().includes(q)&&(!f||res(EV(s.id,t))===f)).sort((a,b)=>((EV(b.id,t)?EV(b.id,t).pct:-1)-(EV(a.id,t)?EV(a.id,t).pct:-1))||cmp(a,b))}
